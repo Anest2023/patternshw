@@ -1,8 +1,3 @@
-
-Anest2023
-2 months ago
-
-Create main.yml
 name: Java CI with Gradle
 
 on: [push, pull_request]
@@ -31,7 +26,4 @@ jobs:
         # Запускаем автотесты
         # Для проектов на базе Selenide необходимо добавить параметр для запуска браузера
         # в headless режиме -Dselenide.headless=true, параметр --info должен остаться
-2 months ago
-
-Headless passed local
         run: ./gradlew test --info -Dselenide.headless=true
