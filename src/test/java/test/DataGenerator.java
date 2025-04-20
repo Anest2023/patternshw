@@ -37,6 +37,10 @@ public class DataGenerator {
 
     }
 
+    public static String generateWrongPhone(String en) {
+        return en;
+    }
+
     public static class Registration {
         private Registration() {
         }

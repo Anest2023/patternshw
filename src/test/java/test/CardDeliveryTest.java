@@ -1,8 +1,8 @@
 package test;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.selenide.AllureSelenide;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.Keys;
 //import ru.netology.delivery.data.DataGenerator;
 
@@ -14,6 +14,16 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 
 class CardDeliveryTest {
+
+    @BeforeAll
+    static void setUpAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
+    }
 
     @BeforeEach
     void setup() {
@@ -57,6 +67,30 @@ class CardDeliveryTest {
         $("[data-test-id='success-notification'] .notification__content")
                 .shouldHave(exactText("Встреча успешно запланирована на " + secondMeetingDate))
                 .shouldBe(visible);
+    }
+
+    @Test
+    @DisplayName("Shold get error message if entered wrong phone number")
+    void shouldGetErrorIfWrongPhone() {
+
+        var validUser = DataGenerator.Registration.generateUser("ru");
+        var daysToAddForFirstMeeting = 4;
+        var firstMeetingDate = DataGenerator.generateDate(daysToAddForFirstMeeting);
+        var daysToAddForSecondMeeting = 7;
+        var secondMeetingDate = DataGenerator.generateDate(daysToAddForSecondMeeting);
+
+        $("[data-test-id='city'] input").setValue(validUser.getCity());
+        $("[data-test-id=date] input").setValue(Keys.chord(Keys.SHIFT, Keys.HOME));
+        $("[data-test-id=date] input").setValue(firstMeetingDate);
+        $("[data-test-id=name] input").setValue(validUser.getName());
+        $("[data-test-id=phone] input").setValue(DataGenerator.generateWrongPhone("en"));
+        $("[data-test-id=agreement]").click();
+        $(byText("Запланировать")).click();
+        $("[data-test-id='phone'].input_invalid .input__sub")
+                .shouldHave(exactText("Неверный формат номера мобильного телефона"));
+
+
+
     }
 }
 
